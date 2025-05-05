@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recipe Scaler</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+  <header>
+    <h1>Recipe <span style="color: #F2D479; font-style: italic;">Scaler</span></h1>
+    <p>Scale ingredients from YouTube videos or your own recipes</p>
+  </header>
+
+  <div class="main-content">
+    <div class="card">
+      <h2>Step 1: Enter YouTube Link</h2>
+      <div class="search-container">
+        <div class="search-tabs">
+          <button class="search-tab active" data-tab="direct-link">Direct Link</button>
+          <button class="search-tab" data-tab="search-youtube"><i class="fab fa-youtube"></i> Search YouTube</button>
+        </div>
+        
+        <div class="tab-content active" id="direct-link">
+          <input type="text" id="youtubeLink" placeholder="Enter YouTube Video URL">
+          <button onclick="fetchIngredients()">Fetch Ingredients</button>
+        </div>
+        
+        <div class="tab-content" id="search-youtube">
+          <div class="search-form">
+            <input type="text" id="searchQuery" placeholder="Search for recipes on YouTube">
+            <select id="recipeCategory">
+              <option value="">All Categories</option>
+              <option value="chicken">Chicken</option>
+              <option value="beef">Beef</option>
+              <option value="vegetarian">Vegetarian</option>
+              <option value="vegan">Vegan</option>
+              <option value="dessert">Dessert</option>
+              <option value="breakfast">Breakfast</option>
+              <option value="pasta">Pasta</option>
+              <option value="soup">Soup</option>
+            </select>
+            <button onclick="searchYouTube()"><i class="fab fa-youtube"></i> Search YouTube</button>
+          </div>
+          <div id="searchResults"></div>
+          <div id="pagination"></div>
+        </div>
+      </div>
+      <div id="loading" class="loading"></div>
+    </div>
+
+    <div id="thumbnailContainer"></div>
+    <div id="ingredientsList" class="fade-in"></div>
+
+    <div class="scale-options">
+      <h2>Step 2: Scale Recipe</h2>
+      <div class="scale-controls">
+        <label for="scalingOption">Adjust By:</label>
+        <select id="scalingOption" onchange="updateScalingOptions()">
+          <option value="servings">Servings</option>
+          <option value="quantity">Quantity</option>
+          <option value="available">Available Ingredients</option>
+          <option value="custom">Custom Ratio</option>
+        </select>
+        
+        <div id="standard-scaling" class="scaling-method">
+          <input type="number" id="scalingValue" value="1" min="0.1" step="0.1">
+        </div>
+        
+        <div id="available-scaling" class="scaling-method" style="display:none">
+          <select id="availableIngredient">
+            <!-- Will be populated with ingredients -->
+          </select>
+          <input type="number" id="availableAmount" placeholder="Amount available" min="0.1" step="0.1">
+        </div>
+        
+        <div id="custom-scaling" class="scaling-method" style="display:none">
+          <input type="number" id="customRatioStart" placeholder="Original" min="0.1" step="0.1">
+          <span>:</span>
+          <input type="number" id="customRatioEnd" placeholder="Target" min="0.1" step="0.1">
+        </div>
+        
+        <button class="scale-btn" onclick="scaleRecipe()">Scale Ingredients</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Or Create Your Own</h2>
+      <button id="enterRecipeManually" class="secondary-btn">Enter Recipe Manually</button>
+    </div>
+    
+    <div id="saved-recipes" class="card" style="display:none">
+      <h2>Saved Recipes</h2>
+      <div id="saved-recipes-list"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    document.getElementById('enterRecipeManually').addEventListener('click', function () {
+      window.location.href = 'enter_recipe.html';
+    });
+    
+    // Load saved recipes when page loads
+    window.addEventListener('DOMContentLoaded', function() {
+      loadSavedRecipes();
+      
+      // Tab switching functionality
+      document.querySelectorAll('.search-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          // Remove active class from all tabs
+          document.querySelectorAll('.search-tab').forEach(t => {
+            t.classList.remove('active');
+          });
+          
+          // Hide all tab content
+          document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+          });
+          
+          // Add active class to clicked tab
+          this.classList.add('active');
+          
+          // Show corresponding content
+          const tabId = this.getAttribute('data-tab');
+          document.getElementById(tabId).classList.add('active');
+        });
+      });
+      
+      // Check if returning from "Modify Scaling"
+      if (sessionStorage.getItem('modifyingRecipe') === 'true') {
+        // Clear the flag
+        sessionStorage.removeItem('modifyingRecipe');
+        
+        // Get YouTube video URL
+        const youtubeLink = sessionStorage.getItem('youtubeVideoUrl');
+        if (youtubeLink) {
+          // Set the URL in the input field
+          document.getElementById('youtubeLink').value = youtubeLink;
+          
+          // Fetch ingredients from this URL
+          fetchIngredients();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

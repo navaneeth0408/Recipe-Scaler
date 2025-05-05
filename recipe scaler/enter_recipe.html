@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enter Recipe Manually</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+  <header>
+    <h1>Recipe <span style="color: #F2D479; font-style: italic;">Scaler</span></h1>
+    <p>Enter Your Ingredients</p>
+  </header>
+
+  <div class="main-content">
+    <div class="card">
+      <h2>Recipe Details</h2>
+      <input type="text" id="recipeName" placeholder="Recipe Name" />
+      <input type="text" id="mainIngredient" placeholder="Main Ingredient" />
+    </div>
+
+    <div class="card">
+      <h2>Ingredients</h2>
+      <div id="recipeIngredientsList"></div>
+      <button onclick="addIngredient()" class="secondary-btn">Add Ingredient</button>
+    </div>
+
+    <div class="scale-options">
+      <h2>Scaling Options</h2>
+      <div class="scale-controls">
+        <label for="scalingOption">Scale By:</label>
+        <select id="scalingOption">
+          <option value="servings">Servings</option>
+          <option value="quantity">Quantity</option>
+        </select>
+        <input type="number" id="scalingValue" value="1" min="1" />
+      </div>
+      <button onclick="scaleRecipe()" class="scale-btn">Scale Recipe</button>
+    </div>
+
+    <div class="nav-buttons">
+      <button onclick="window.location.href='index.html'" class="secondary-btn">Back to Home</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
